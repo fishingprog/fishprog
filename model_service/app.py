@@ -8,7 +8,7 @@ import os
 app = Flask(__name__)
 
 # Load the ml model
-MODEL_PATH = os.getenv('MODEL_PATH', './model/voting_clf_sknew.joblib')
+MODEL_PATH = './model/gradientboosting_clf_sknew.joblib'
 model = joblib.load(MODEL_PATH)
 
 latest_predictions = None
@@ -49,6 +49,9 @@ def predict():
                prediction_counts = dict(zip(unique, counts))
                print("Count of 0s:", prediction_counts.get(0, 0))
                print("Count of 1s:", prediction_counts.get(1, 0))
+
+               # Filter the rows where the prediction is 1
+               filtered_data = df[predictions == 1]
 
                # Extract the latitude and longitude of these rows
                # lat_lon_predictions = filtered_data[['lat', 'lon']]
@@ -112,4 +115,6 @@ def get_predictions():
 
 
 if __name__ == '__main__':
-     app.run(debug=True)
+     port = int(os.environ.get('PORT', 5000))  # Fallback to 5000 if PORT not set
+     app.run(host='0.0.0.0', port=port, debug=True)
+
